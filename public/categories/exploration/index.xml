@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Exploration on Eat, sleep, code, repeat</title>
+    <link>https://anthony.truskinger.name/categories/exploration/</link>
+    <description>Recent content in Exploration on Eat, sleep, code, repeat</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-au</language>
+    <lastBuildDate>Wed, 17 Jan 2018 22:24:53 +1000</lastBuildDate>
+    
+	<atom:link href="https://anthony.truskinger.name/categories/exploration/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Building a Blog With Hugo (Eventually)</title>
+      <link>https://anthony.truskinger.name/posts/building-blog-with-hugo/</link>
+      <pubDate>Wed, 17 Jan 2018 22:24:53 +1000</pubDate>
+      
+      <guid>https://anthony.truskinger.name/posts/building-blog-with-hugo/</guid>
+      <description>I have tried many times to start a blog. I think it&amp;rsquo;s important for me to write often because writing is something I have difficulty concentrating on. Some might find my distaste and associated boredom with writing ironic given I elected to do a PhD&amp;hellip; but I digress.
+Required features These are the requirement I have always wanted for a blog platform:
+ Free hosting Complete customisation Complete transparency&amp;ndash;As a professional point of pride, I need to understand how it all works Minimal overhead&amp;ndash;I don&amp;rsquo;t want to be patching (even more) servers  Putting those requirements together, I decided I wanted to use a static website generator.</description>
+    </item>
+    
+  </channel>
+</rss>

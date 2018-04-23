@@ -1,0 +1,51 @@
+baseURL: "https://anthony.truskinger.name"
+languageCode: "en-au"
+title: "Eat, sleep, code, repeat"
+description: "Ramblings about code and other such things"
+
+theme: "ananke"
+
+# Theme settings
+# See ./themes/ananke/exampleSite/config.toml
+MetaDataFormat: "yaml"
+DefaultContentLanguage: "en"
+
+Paginate: 10
+googleAnalytics: ''
+enableRobotsTXT: true
+enableGitInfo: true
+enableEmoji: true
+pluralizeListTitles: false
+
+sitemap:
+  changefreq: "monthly"
+  priority: 0.5
+  filename: "sitemap.xml"  
+
+params:
+  # choose a background color from any on this page: http://tachyons.io/docs/themes/skins/ and preface it with "bg-"
+  background_color_class: "bg-black"
+  highlight_class: "red b helvetica tracked"
+  
+  body_classes: "light-gray bg-red georgia"
+  link_classes: "hover-white no-underline white-90"
+  content_classes: "bg-near-black "
+
+  featured_image: "/images/blog-cover.jpg"
+  recent_posts_number: 5
+
+  twitter: "https://twitter.com/atruskie"
+  github: "https://github.com/atruskie"
+  linkedin: "https://linkedin.com/in/AnthonyTruskinger/"
+
+  favicon: ""
+  description: "Ramblings about code and other such things"
+  
+taxonomies:
+  tag: "tags"
+  category: "categories"
+  series: "series"
+
+  
+
+  

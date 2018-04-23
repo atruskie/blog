@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en-au">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Eat, sleep, code, repeat  | Investigating Excessive Memory Usage in Redis</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.32.2" />
+    
+    
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    
+
+    <link href='https://anthony.truskinger.name/dist/main.css' rel='stylesheet' type="text/css" />
+    
+      
+    
+
+    
+
+    <meta property="og:title" content="Investigating Excessive Memory Usage in Redis" />
+<meta property="og:description" content="At www.ecosounds.org we use Resque as our asynchronous job processing system. Resque was created, used, and open sourced by GitHub. It is a queue based implementation built on top of Redis. Redis is an in memory, key-value store (a database) that is exceptionally fast.
+The system has its limitations but has generally worked pretty well for us. We’ve run in excess of a million jobs through Resque and we consider that to be a decent amount for a small site like ours." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://anthony.truskinger.name/posts/investigating-excessive-memory-usage-in-redis/" />
+
+
+
+<meta property="article:published_time" content="2016-09-04T18:00:00&#43;10:00"/>
+
+<meta property="article:modified_time" content="2016-09-04T18:00:00&#43;10:00"/>
+
+
+
+
+
+
+
+
+
+
+
+<meta itemprop="name" content="Investigating Excessive Memory Usage in Redis">
+<meta itemprop="description" content="At www.ecosounds.org we use Resque as our asynchronous job processing system. Resque was created, used, and open sourced by GitHub. It is a queue based implementation built on top of Redis. Redis is an in memory, key-value store (a database) that is exceptionally fast.
+The system has its limitations but has generally worked pretty well for us. We’ve run in excess of a million jobs through Resque and we consider that to be a decent amount for a small site like ours.">
+
+
+<meta itemprop="datePublished" content="2016-09-04T18:00:00&#43;10:00" />
+<meta itemprop="dateModified" content="2016-09-04T18:00:00&#43;10:00" />
+<meta itemprop="wordCount" content="1511">
+
+
+
+<meta itemprop="keywords" content="Redis,Resque,RAM,ecosounds," />
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Investigating Excessive Memory Usage in Redis"/>
+<meta name="twitter:description" content="At www.ecosounds.org we use Resque as our asynchronous job processing system. Resque was created, used, and open sourced by GitHub. It is a queue based implementation built on top of Redis. Redis is an in memory, key-value store (a database) that is exceptionally fast.
+The system has its limitations but has generally worked pretty well for us. We’ve run in excess of a million jobs through Resque and we consider that to be a decent amount for a small site like ours."/>
+
+  </head>
+
+  <body class="ma0 flex flex-column full-height light-gray bg-red georgia">
+
+    
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="https://anthony.truskinger.name" class="f3 fw2  hover-white no-underline white-90 dib">
+      Eat, sleep, code, repeat
+    </a>
+    <div class="flex-l items-center">
+      
+      
+
+
+
+  <a href="https://twitter.com/atruskie" class="link-transition twitter link dib z-999 pt3 pt0-l mr2" title="Twitter link">
+    <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+  </a>
+
+
+
+
+  <a href="https://linkedin.com/in/AnthonyTruskinger/" class="link-transition linkedin link dib z-999 pt3 pt0-l mr2" title="LinkedIn link">
+    <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z"/>
+</svg>
+  </a>
+
+
+  <a href="https://github.com/atruskie" class="link-transition github link dib z-999 pt3 pt0-l mr2" title="Github link">
+    <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+  </a>
+
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+    <main class="flex-auto flex center w-90 bg-near-black " role="main">
+      
+  <div class="flex-l w-100" >
+    <article class="center cf pv5 ph3 ph4-ns mw7 ">
+      <header>
+        <h2 class="">
+          <a class="link f5 red b helvetica tracked db"
+             href="https://anthony.truskinger.name/posts/">
+            POSTS
+          </a>          
+        </h2>
+        <h1 class="f1">
+          Investigating Excessive Memory Usage in Redis
+        </h1>
+      </header>
+      <div class="nested-copy-line-height lh-copy f4 measure-wide nested-links nested-img">
+        
+
+<p>At <a href="http://www.ecosounds.org">www.ecosounds.org</a> we use Resque as our asynchronous job processing
+system. Resque was created, used, and open sourced by GitHub. It is a queue based implementation
+built on top of Redis. Redis is an in memory, key-value store (a database) that is exceptionally fast.</p>
+
+<p>The system has its limitations but has generally worked pretty well for us. We’ve run in excess of
+a million jobs through Resque and we consider that to be a decent amount for a small site like ours.</p>
+
+<p>Now to the problem: Redis is using an excessive amount of RAM. The job system was idle, no jobs were
+in queue and yet Redis was using 4.62GB of RAM. To compound the problem:</p>
+
+<ul>
+<li>I did not write the code for our job system and have since inherited the code base</li>
+<li>I did not fully understand Redis</li>
+<li>I have previously interacted with Redis almost entirely through the Resque API
+(and had essentially learnt nothing about Redis – great to get started, not so much now)</li>
+<li>I knew that jobs should have been deleted after they were run</li>
+<li>That much RAM usage meant we needed to maintain a more expensive server</li>
+<li>And that much RAM usage meant that there was no way we would be able to enqueue another large batch of work</li>
+</ul>
+
+<p>To further complicate matters, the <a href="http://redis.io/topics/faq#https://redis.io/topics/faq#background-saving-fails-with-a-fork-error-under-linux-even-if-i-have-a-lot-of-free-ram">method Redis uses</a> to save periodic backups of the database, coupled with strange behaviour from our hypervisor, meant that we needed twice of Redis’ current RAM usage to make such backups. Not having another 4GB of RAM lying around this now meant our Redis instance was truly in memory – any outage would destroy the job queue.</p>
+
+<p>The contents of the database were almost entirely opaque to me. I started trying to fix the problem by extracting invariant parts of our payloads out into separate keys. For example, the payloads to run a job would normally look like this:</p>
+
+<script src="//gist.github.com/atruskie/5cc3f8cc519da268f846228ffc677624.js?file=payload1_full.json"></script>
+
+<script src="//gist.github.com/atruskie/5cc3f8cc519da268f846228ffc677624.js?file=payload2_full.json"></script>
+
+<p>In those payloads, you’ll note that 92% of them are identical. These identical payloads have twice before been replicated 350 000 times for large job sets. My idea was to add some extra logic so that the payloads would be reduced to:</p>
+
+<script src="//gist.github.com/atruskie/5cc3f8cc519da268f846228ffc677624.js?file=payload1_variant.json"></script>
+
+<script src="//gist.github.com/atruskie/5cc3f8cc519da268f846228ffc677624.js?file=payload2_variant.json"></script>
+
+<p>And the rest of the payload could be resolved using some extra logic in the worker. The result
+should have been a saving of $1.62\text{GB}\;-\;132.86\text{MB}\;=\;1.48\text{GB}$ &ndash; a 91.3% saving of RAM.</p>
+
+<p>This is a fine solution but I realised&ndash;perhaps too late&ndash;that I wasn’t actually solving the real problem. If our jobs were correctly disposed of, then we could probably handle the temporary RAM spike for large jobs sets, even with the massively inefficient payloads.</p>
+
+<p>To fix this, I had to learn about the system I was using. I had to find some way to inspect, analyse, and understand the data in Redis.</p>
+
+<p>I started by SSHing directly into our Redis server and attempted to use the <code>redis-cli</code> tool to inspect the database. The tool is in many regards excellent – powerful, simple, scriptable. However, without expert knowledge of Redis commands I found I made little progress understanding the data. The <code>INFO</code> command provided some data on memory usage but it didn’t tell me how much or where the data was.</p>
+
+<p>A quick search for a better solution led me to this fantastic package on GitHub: Redis Memory Analyzer (<code>rma</code>) by GameNet. This tool would apparently provide a breakdown of memory usage by datatypes and key for the database. Not wanting to run untrusted code on a production server (or install unnecessary dev dependencies), I first setup a stunnel client connection (TLS encrypted) from my dev machine to the production server. As we assume an unsecure public network between servers, we already had an stunnel server set up, that only accepted our certificate and connections from trusted IPs, to provide secure remote access to the Redis database.</p>
+
+<p>I needed to add this section to the default stunnel config on my dev machine:</p>
+
+<pre><code class="language-toml">[ecosounds-redis]
+accept = 56379
+connect = db.ecosounds.org:*****
+verify = 3
+client = yes
+CAfile = ..\redis.crt
+</code></pre>
+
+<aside>An aside: my security precautions were a balance of risks; not perfect but good enough for the task. Even though I decided against installing untrusted software (and more importantly, all of *its* dev dependencies), I still gave untrusted code access to a production database. This risk was balanced by the fact that we store no sensitive information in Redis and that destruction of that database would have had minimal impact as the job queue was empty.
+</aside>
+
+<p>Then I installed <code>rma</code> and executed the tool with:</p>
+
+<pre><code class="language-shell">C:\Users\Anthony&gt; rma -s 127.0.0.1 -p 56379 -a *********************************************
+</code></pre>
+
+<p>The result was amazing. The tool did a particularly good job at revealing unobvious memory overheads that are a result of Redis’ penchant for speed. You see the full report <a href="https://gist.github.com/atruskie/1597e5e4cd3e36c0f446c411c03ef812">here</a> and I’ll highlight some sections below:</p>
+
+<ul>
+<li>99% of the keys stored are from the resque:status gem. That&rsquo;s 545 073 keys; one per resque job since February this year.</li>
+<li>all of those stored are from completed (or failed) jobs!</li>
+<li>the string values for the resque:status gem&rsquo;s keys are using 3.4GB or RAM, and 4.5GB in reality (1.33 ratio overhead)</li>
+<li>For the special Resque failed jobs queue (which I originally thought may be the problem):
+
+<ul>
+<li>The Resque <code>failed</code> queue is isolated and</li>
+<li>For Resque <code>failed</code> queue (it is a Redis <code>LIST</code>) for 7000 failed jobs uses only 111MB of RAM (stores full payload, and exception stack trace)</li>
+<li>Conclusion: the resque failed queue itself is not a problem</li>
+</ul></li>
+</ul>
+
+<p>The resque:status gem was a plugin we added to resque that stores extra metadata for jobs that are processed. I now knew what was causing the problem but not why.</p>
+
+<p>Now wanting to inspect the data, I found Redis Desktop <a href="https://redisdesktop.com/">https://redisdesktop.com/</a>. I cannot overstate how useful it is to visualize data, relationships, and hierarchies. Sometimes GUIs are the best tool for the job. I was so impressed with Redis Desktop I donated to their bug bounty found.</p>
+
+<p>After installing and connecting using the same stunnel connection from earlier I then loaded up the database.</p>
+
+
+<figure >
+    
+        <img src="https://i.gyazo.com/615310456ce0b9135effa2a4cf690548.png" />
+    
+    
+    <figcaption>
+        <h4>A screenshot of Redis Desktop in action</h4>
+        
+    </figcaption>
+    
+</figure>
+
+
+<aside>
+    
+An aside: Redis has almost no indexing or search capabilities. The commands it does have are usually
+`O(n)` (linear) in terms of complexity/cost to run. It was evident from the command list that was
+displayed at the bottom of the window how unoptimized Redis is for this sort of task. It will still
+*very* quick, and only took 30 seconds to load the whole 500 000 keyspace.
+
+</aside>
+
+<p>Immediately I could see:</p>
+
+<ul>
+<li>Which namespace had the large group of keys</li>
+<li>I could simply point and click to load one of the resque:status keys</li>
+<li>I could immediately see the <code>TTL</code> was set to <code>-1</code></li>
+<li>And I noticed another bug: the <code>name</code> field was a serialized version of the (very large) payload!</li>
+</ul>
+
+<p>So, the status metadata was never deleted because the keys were set to never expire (<code>TTL=-1</code>) – every single job we ever run was being permanently stored. This problem was made twice as bad because for some reason every status had the excessively large payloads stored twice!</p>
+
+<p>From there it was a relatively easy to fix the problems. For the expire problem I found where our application set the default expire options for the resque:status metadata when the application started, knew that setting had no effect, and moved it to a better spot.</p>
+
+<p>For the duplicated payload in the <code>name</code> field problem, I searched through the source code of resque:status, found where the name method was defined, and saw how the default behaviour uses a native representation of the job’s class (which we had stuck a bunch of instance variables too) as the name for the status by default. Once I worked that out, I overrode the name method in the job class so that I could ensure an appropriate name of my choosing was used by resque:status for the <code>name</code> value.</p>
+
+<p>I added unit tests for both bugs to ensure neither of these problems would happen again.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>This investigation took 5 hours to complete. I spent another 2 hours writing this blog post to document my work. I am ecstatic that I took the time to learn the intricacies of the system I inherited and glad I chose to properly understand the problem space before blindly pushing ahead with my original solution. Had I not taken the time those two bugs they would have surely vexed me in the future. I anticipate that those bug fixes will reduce the status metadata memory usage more than 50% and that Redis will delete expired status metadata regularly to keep overall memory usage down under 1GB even with a full ~300 000 size job set enqueued.</p>
+
+<p>I am pleased that I found two useful, well maintained, open source tools that aided my exploration. Hats off to both of these tools and their maintainers for producing such excellent software.</p>
+
+<p>While the problems I addressed were highly specific to our codebase my hope is that the tools, techniques, and the method I used are applicable to other situations – especially for developers that are new to using Redis.</p>
+
+      </div>
+    </article>
+    <aside class="ph3 pt5-ns bg-white-10">
+      
+
+
+
+
+
+
+
+  <div class="pa2">
+    <ul>
+    
+      <h2 class="list mb3 f5 red b helvetica tracked">
+        2 OTHER POSTS
+      </h2>
+      
+        <li class="list f5 w-100 nl1">
+          
+          <a href="/posts/building-blog-with-hugo/"
+             class="link ph2 pv2 db  hover-white no-underline white-90">
+            Building a Blog With Hugo (Eventually)
+          </a>
+        </li>
+      
+        <li class="list f5 w-100 nl1">
+          
+          <a href="/posts/investigating-excessive-memory-usage-in-redis/"
+             class="link ph2 pv2 db  o-50 hover-white no-underline white-90">
+            Investigating Excessive Memory Usage in Redis
+          </a>
+        </li>
+      
+        <li class="list f5 w-100 nl1">
+          
+          <a href="/posts/switching-vagrant-to-hyperv/"
+             class="link ph2 pv2 db  hover-white no-underline white-90">
+            Switching Vagrant to Hyper-V
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+    </aside>
+  </div>
+
+    </main>
+    <footer class="bg-near-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+    <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="https://anthony.truskinger.name" >
+      &copy; 2018 Eat, sleep, code, repeat
+    </a>
+    <div>
+      
+
+
+
+  <a href="https://twitter.com/atruskie" class="link-transition twitter link dib z-999 pt3 pt0-l mr2" title="Twitter link">
+    <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+  </a>
+
+
+
+
+  <a href="https://linkedin.com/in/AnthonyTruskinger/" class="link-transition linkedin link dib z-999 pt3 pt0-l mr2" title="LinkedIn link">
+    <svg  height="32px"  style="enable-background:new 0 0 65 65;" version="1.1" viewBox="0 0 65 65" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path d="M50.837,48.137V36.425c0-6.275-3.35-9.195-7.816-9.195  c-3.604,0-5.219,1.983-6.119,3.374V27.71h-6.79c0.09,1.917,0,20.427,0,20.427h6.79V36.729c0-0.609,0.044-1.219,0.224-1.655  c0.49-1.22,1.607-2.483,3.482-2.483c2.458,0,3.44,1.873,3.44,4.618v10.929H50.837z M22.959,24.922c2.367,0,3.842-1.57,3.842-3.531  c-0.044-2.003-1.475-3.528-3.797-3.528s-3.841,1.524-3.841,3.528c0,1.961,1.474,3.531,3.753,3.531H22.959z M34,64  C17.432,64,4,50.568,4,34C4,17.431,17.432,4,34,4s30,13.431,30,30C64,50.568,50.568,64,34,64z M26.354,48.137V27.71h-6.789v20.427  H26.354z"/>
+</svg>
+  </a>
+
+
+  <a href="https://github.com/atruskie" class="link-transition github link dib z-999 pt3 pt0-l mr2" title="Github link">
+    <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+  </a>
+
+
+    </div>
+  </div>
+</footer>
+
+    <script src="https://anthony.truskinger.name/dist/app.bundle.js" async></script>
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.css" integrity="sha384-exe4Ak6B0EoJI0ogGxjJ8rn+RN3ftPnEQrGwX59KTCl5ybGzvHGKjhPKk/KC3abb" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/katex.min.js" integrity="sha384-OMvkZ24ANLwviZR2lVq8ujbE/bUO8IR1FdBrKLQBI14Gq5Xp/lksIccGkmKL8m+h" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0-alpha2/contrib/auto-render.min.js" integrity="sha384-cXpztMJlr2xFXyDSIfRWYSMVCXZ9HeGXvzyKTYrn03rsMAlOtIQVzjty5ULbaP8L" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      renderMathInElement(
+          document.body,
+          {
+            delimiters: [
+              {left: "$$", right: "$$", display: true},
+              {left: "\\[", right: "\\]", display: true},
+              {left: "$", right: "$", display: false},
+              {left: "\\(", right: "\\)", display: false}
+            ]
+          }
+        );
+    });
+</script>
+  </body>
+</html>

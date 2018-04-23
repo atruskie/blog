@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Resque on Eat, sleep, code, repeat</title>
+    <link>https://anthony.truskinger.name/tags/resque/</link>
+    <description>Recent content in Resque on Eat, sleep, code, repeat</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-au</language>
+    <lastBuildDate>Sun, 04 Sep 2016 18:00:00 +1000</lastBuildDate>
+    
+	<atom:link href="https://anthony.truskinger.name/tags/resque/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Investigating Excessive Memory Usage in Redis</title>
+      <link>https://anthony.truskinger.name/posts/investigating-excessive-memory-usage-in-redis/</link>
+      <pubDate>Sun, 04 Sep 2016 18:00:00 +1000</pubDate>
+      
+      <guid>https://anthony.truskinger.name/posts/investigating-excessive-memory-usage-in-redis/</guid>
+      <description>At www.ecosounds.org we use Resque as our asynchronous job processing system. Resque was created, used, and open sourced by GitHub. It is a queue based implementation built on top of Redis. Redis is an in memory, key-value store (a database) that is exceptionally fast.
+The system has its limitations but has generally worked pretty well for us. We’ve run in excess of a million jobs through Resque and we consider that to be a decent amount for a small site like ours.</description>
+    </item>
+    
+  </channel>
+</rss>

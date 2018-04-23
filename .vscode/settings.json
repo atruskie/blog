@@ -1,0 +1,19 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "public/**": true
+    },
+    "cSpell.language": "en-GB",
+    "cSpell.words": [
+        "SSHFS",
+        "blogging",
+        "fallback",
+        "hypervisor",
+        "performant",
+        "virtualization"
+    ]
+}

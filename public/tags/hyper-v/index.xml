@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hyper V on Eat, sleep, code, repeat</title>
+    <link>https://anthony.truskinger.name/tags/hyper-v/</link>
+    <description>Recent content in Hyper V on Eat, sleep, code, repeat</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-au</language>
+    
+	<atom:link href="https://anthony.truskinger.name/tags/hyper-v/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Switching Vagrant to Hyper-V</title>
+      <link>https://anthony.truskinger.name/posts/switching-vagrant-to-hyperv/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://anthony.truskinger.name/posts/switching-vagrant-to-hyperv/</guid>
+      <description>I use Vagrant to script and automate virtual machines used for development purposes. When I first started using Vagrant I didn&amp;rsquo;t really understand its utility or its place in the development cycle. Now though I&amp;rsquo;m quite happy in my understanding that it is just a automation layer, a scripting abstraction, used to paste over the differences of different virtualization layers&amp;ndash;most of the time at least.
+There are of course other alternative to using virtual machines for development environments.</description>
+    </item>
+    
+  </channel>
+</rss>
