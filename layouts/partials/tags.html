@@ -1,0 +1,13 @@
+<ul class="f6 ma0 pa0">
+  {{ range .Params.tags }}
+      <li class="dib mr1 pa2 br3 {{ $.Param "panel_classes" }}">
+        <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}"
+            class="link {{ $.Param "link_classes" }}">
+            {{ . }}
+        </a>
+      </li>
+  {{end}}
+</ul>
+
+
+

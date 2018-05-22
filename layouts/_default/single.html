@@ -1,0 +1,24 @@
+{{ define "header" }}{{ partial "page-header.html" . }}{{ end }}
+{{ define "main" }}
+  <div class="flex-l w-100" >
+    <article class="center cf pv5 ph3 ph4-ns mw7 ">
+      <header>
+        <h2 class="">
+          <a class="link f5 {{ $.Param "highlight_class" }} db"
+             href="{{ .CurrentSection.Permalink }}">
+            {{ humanize .Section | upper }}
+          </a>          
+        </h2>
+        <h1 class="f1">
+          {{ .Title }}
+        </h1>
+      </header>
+      <div class="nested-copy-line-height lh-copy f4 measure-wide nested-links nested-img">
+        {{ .Content }}
+      </div>
+    </article>
+    <aside class="ph3 pt5-ns bg-white-10">
+      {{ partial "menu-contextual.html" . }}
+    </aside>
+  </div>
+{{ end }}

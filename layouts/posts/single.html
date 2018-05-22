@@ -1,0 +1,47 @@
+{{ define "header" }}
+   {{/* We can override any block in the baseof file be defining it in the template */}}
+   {{ partial "page-header.html" . }}
+{{ end }}
+
+{{ define "main" }}
+  <div class="flex flex-wrap justify-center">
+    <article class="pv5 ph3 ph4-ns mw8 w-100">
+      <p class="f6 b helvetica tracked">
+        {{/* Humanize removes hyphens and capitalizes the first word */}}
+        {{ humanize .Section | upper  }}
+      </p>
+      <h1 class="f1 athelas">
+        {{ .Title }}
+      </h1>
+        {{/* TODO: Add Hugo author  */}}
+      <div class="flex flex-wrap justify-between items-center">
+        <div class="atruskie-min-width-50 pt2">
+          written by {{ .Site.Params.author }}
+        </div>
+        <div class="atruskie-min-width-50 tr pt2">
+          {{partial "tags" . }}
+        </div>
+        <div class="atruskie-min-width-50">
+          {{ partial "date" .Date }}
+          
+        </div>
+
+        <div class="atruskie-min-width-50 tr">
+            {{ partial "git-info.html" . }}
+        </div>
+      </div> 
+      
+      <section class="nested-copy-line-height lh-copy f4 nested-links nested-img">
+        {{ .Content }}
+      </section>
+      
+    </article>
+    <div class="pa3 w-100 ">
+      <div class="mw8 center">
+      {{ partial "related-pages.html" . }}
+
+      {{ partial "menu-contextual.html" . }}
+      </div>
+    </div>
+  </div>
+{{ end }}

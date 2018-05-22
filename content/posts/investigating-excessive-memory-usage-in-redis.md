@@ -5,7 +5,7 @@ draft: false
 tags: [Redis, Resque, RAM, ecosounds]
 categories: [Software, Diagnostics]
 ---
-
+  
 At [www.ecosounds.org](http://www.ecosounds.org) we use Resque as our asynchronous job processing
 system. Resque was created, used, and open sourced by GitHub. It is a queue based implementation
 built on top of Redis. Redis is an in memory, key-value store (a database) that is exceptionally fast.

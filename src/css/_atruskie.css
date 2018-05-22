@@ -1,0 +1,15 @@
+.atruskie-bg-darker-gray {
+    background-color: #1E1E1E;
+}
+
+.atruskie-width-05 {
+    width: 5%;
+}
+
+.atruskie-min-width-50 {
+    min-width: 50%;
+}
+
+.atruskie-flex-shrink {
+    flex-shrink: 1;
+}

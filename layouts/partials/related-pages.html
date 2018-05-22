@@ -1,0 +1,27 @@
+
+{{ $currentPageUrl := .URL }}
+{{ if .Params.tags }}
+  {{ $name := index .Params.tags 0 }}
+  {{ $name := $name | urlize }}
+  {{ $tags := index .Site.Taxonomies.tags $name }}
+  {{ $i := $tags | len }}
+  {{ if ge $i 2 }}
+    <div class="pa2 {{ $.Param "panel_classes" }}">
+      <h2 class="pa1 f5 {{ $.Param "highlight_class" }}">
+        RELATED {{ .Section | humanize | pluralize | upper }}
+      </h2>
+      <ul class="ml0 pl0">
+        </li>
+        {{ range $tags.Pages }}
+          {{ if ne .URL $currentPageUrl }}
+            <li class="list f5 w-100">
+              <a href="{{ .URL }}" class="link pa1 db {{ if eq $currentPageUrl .URL }} o-50{{end}} {{ $.Param "link_classes" }}">
+                 {{ .LinkTitle }}
+              </a>
+            </li>
+          {{ end }}
+        {{end}}
+      </ul>
+    </div>
+  {{ end }}
+{{end}}

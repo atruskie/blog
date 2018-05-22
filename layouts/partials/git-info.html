@@ -1,0 +1,20 @@
+{{ $viewBase := print .Site.Params.sourceRepo "/blob/" .GitInfo.Hash  }}
+{{ $historyBase := print .Site.Params.sourceRepo "/commit/" .GitInfo.Hash  }}
+{{ $viewUrl := print $viewBase "/content/" (replace .Page.File.Path "\\" "/") }}
+{{ $historyUrl := print $historyBase "/content/" (replace .Page.File.Path "\\" "/") }}
+{{ $classes := print "link underline gray"}}
+<p class="f7 gray code">
+    <span class="">
+        last modified 
+        <a class="{{ $classes }}"
+            href="{{ $historyUrl }}">
+            <time datetime="{{ .Lastmod }}">{{ .Lastmod -}}</time></a>
+    </span>
+    <span class="">
+        in 
+        <a class="{{ $classes }}"
+            href="{{ $viewUrl }}">
+            {{ .GitInfo.AbbreviatedHash }}
+        </a>
+    </span>
+</p>
