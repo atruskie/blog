@@ -16,6 +16,14 @@ enableGitInfo: true
 enableEmoji: true
 pluralizeListTitles: false
 
+# enables syntax guessing for code fences without specified language
+pygmentsCodeFencesGuessSyntax: true
+# color-codes for highlighting derived from this style
+pygmentsStyle: "fruity"
+# enable github style fenced code blocks
+pygmentsCodeFences: true
+pygmentsOptions: "linenos=true"
+
 sitemap:
   changefreq: "monthly"
   priority: 0.5

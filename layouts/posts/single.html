@@ -22,19 +22,16 @@
           {{partial "tags" . }}
         </div>
         <div class="atruskie-min-width-50">
-          {{ partial "date" .Date }}
-          
+          {{ partial "date" .Date }} 
         </div>
-
         <div class="atruskie-min-width-50 tr">
             {{ partial "git-info.html" . }}
         </div>
-      </div> 
-      
-      <section class="nested-copy-line-height lh-copy f4 nested-links nested-img">
+      </div>
+      <section class="nested-copy-line-height lh-copy f4 nested-links nested-img nested-copy-separator atruskie-nested-copy-code">
+        {{ partial "old-post.html" . }}
         {{ .Content }}
       </section>
-      
     </article>
     <div class="pa3 w-100 ">
       <div class="mw8 center">

@@ -13,3 +13,13 @@
 .atruskie-flex-shrink {
     flex-shrink: 1;
 }
+
+.atruskie-nested-copy-code pre {
+    overflow: auto !important;
+}
+
+.atruskie-nested-copy-code p>code {
+    background-color: #111;
+    padding: 0 0.5em;
+}
+
