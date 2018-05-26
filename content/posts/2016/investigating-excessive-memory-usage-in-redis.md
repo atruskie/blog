@@ -8,7 +8,7 @@ categories: [Software, Diagnostics]
   
 At [www.ecosounds.org](http://www.ecosounds.org) we use Resque as our asynchronous job processing
 system. Resque was created, used, and open sourced by GitHub. It is a queue based implementation
-built on top of Redis. Redis is an in memory, key-value store (a database) that is exceptionally fast.
+built on top of Redis. Redis is an in memory, key-value store (a non-relational database) that is exceptionally fast.
 
 The system has its limitations but has generally worked pretty well for us. We’ve run in excess of 
 a million jobs through Resque and we consider that to be a decent amount for a small site like ours.
@@ -65,7 +65,7 @@ CAfile = ..\redis.crt
 
 Then I installed `rma` and executed the tool with:
 
-```shell
+```markdown
 C:\Users\Anthony> rma -s 127.0.0.1 -p 56379 -a *********************************************
 ```
 

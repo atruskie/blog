@@ -28,9 +28,11 @@ installation of a web server and a database. All this extra overhead for running
 a dynamic web application is just too much complexity for what a blog (or for
 that matter many other websites) need.
 
-I decided on these requirements years ago and while if I had given in and just
-used a hosted blogging service I would have been up and running but far from
+I decided on these requirements years ago and if I had given in and just
+used a hosted blogging service I would have been up and running and
 happy.
+
+Nonetheless, unreasonable persistence.
 
 ## Attempt 1: Jekyll + GitHub Pages
 

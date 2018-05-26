@@ -1,5 +1,5 @@
 ---
-title: "Win32 Openssh Unprotected Key File"
+title: "Win32 OpenSSH Unprotected Key File"
 date: 2018-01-21T23:51:22+10:00
 draft: true
 tags: [Win32-OpenSSH, "Windows Security", "SSH", Redis]
@@ -16,7 +16,7 @@ you are allowed to use them!
 
 <!--more--> 
 
-```shell
+```batch
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -36,7 +36,7 @@ is annoying!
 The fix for this solution on any Unix like system is pretty easy: grant `user`
 read and write permissions, and revoke all permissions from `group` and `other`.
 
-```shell
+```bash
 chmod u+rw,go-rwx
 ```
 
@@ -50,7 +50,7 @@ Using guidance from the [Win32-OpenSSH wiki page](https://github.com/PowerShell/
 these are the commands that work for me:
 
 
-```PowerShell
+```powershell
 # From an elevated PowerShell prompt
 # NOTE: Be careful! 
 $path = "C:/.../.vagrant/machines/default/hyperv/private_key"
