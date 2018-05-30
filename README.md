@@ -31,3 +31,6 @@ $ npm run build:production
 ```
 hugo new posts/name-of-post.md
 ```
+
+---
+Note to self: `HUGO_VERSION` is set in Netlify to `0.40`
