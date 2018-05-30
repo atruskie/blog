@@ -1,5 +1,12 @@
-{{ $viewBase := print .Site.Params.sourceRepo "/blob/" .GitInfo.Hash  }}
-{{ $historyBase := print .Site.Params.sourceRepo "/commit/" .GitInfo.Hash  }}
+{{ $viewBase := ""  }}
+{{ $historyBase := ""  }}
+{{ $abbreviatedHash := ""  }}
+{{ $site := .Site }}
+{{ with .GitInfo }}
+    {{ $viewBase := print $site.Params.sourceRepo "/blob/" .Hash  }}
+    {{ $historyBase := print $site.Params.sourceRepo "/commit/" .Hash  }}
+    {{ $abbreviatedHash := .AbbreviatedHash  }}
+{{ end }}
 {{ $viewUrl := print $viewBase "/content/" (replace .Page.File.Path "\\" "/") }}
 {{ $historyUrl := print $historyBase "/content/" (replace .Page.File.Path "\\" "/") }}
 {{ $classes := print "link underline gray"}}
@@ -14,7 +21,7 @@
         in 
         <a class="{{ $classes }}"
             href="{{ $viewUrl }}">
-            {{ .GitInfo.AbbreviatedHash }}
+            {{ $abbreviatedHash }}
         </a>
     </span>
 </p>

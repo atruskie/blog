@@ -8,12 +8,13 @@
     <article class="pv5 ph3 ph4-ns mw8 w-100">
       <p class="f6 b helvetica tracked">
         {{/* Humanize removes hyphens and capitalizes the first word */}}
-        {{ humanize .Section | upper  }}
+        <a href="{{ (.Site.GetPage "section" .Section).Permalink }}" class="link {{ $.Param "link_classes" }}">
+          {{ humanize .Section | upper  }}
+        </a>
       </p>
       <h1 class="f1 athelas">
         {{ .Title }}
       </h1>
-        {{/* TODO: Add Hugo author  */}}
       <div class="flex flex-wrap justify-between items-center">
         <div class="atruskie-min-width-50 pt2">
           written by {{ .Site.Params.author }}
@@ -26,6 +27,11 @@
         </div>
         <div class="atruskie-min-width-50 tr">
             {{ partial "git-info.html" . }}
+        </div>
+        <div class="atruskie-min-width-50">
+            <p class="f7 gray">
+              reading time {{ .ReadingTime }} minutes
+            </p>
         </div>
       </div>
       <section class="nested-copy-line-height lh-copy f4 nested-links nested-img nested-copy-separator atruskie-nested-copy-code">
