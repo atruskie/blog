@@ -1,8 +1,8 @@
 ---
 title: "Win32 OpenSSH Unprotected Key File"
 date: 2018-01-21T23:51:22+10:00
-draft: true
-tags: [Win32-OpenSSH, "Windows Security", "SSH", Redis]
+draft: false
+tags: [Win32-OpenSSH, "Windows Security", "SSH"]
 categories: [Software, Development]
 ---
 
